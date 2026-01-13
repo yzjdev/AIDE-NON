@@ -144,24 +144,42 @@ public class MainActivity extends BaseActivity {
     // 业务逻辑
     // ======================
 
+	/**
+     * 加载文件列表 (优化版：防止卡顿)
+     */
     private void loadFiles(File dir) {
+        // 1. 基础检查
         if (dir == null || !dir.exists()) return;
+
+        // 2. 检查是否重复加载
         if (currentDir != null && currentDir.equals(dir)) return;
 
         this.currentDir = dir;
 
-        File[] allFiles = dir.listFiles();
-        if (allFiles == null) allFiles = new File[0];
+        // 3. 【优化点】开启子线程处理耗时操作
+        new Thread(() -> {
+            // A. 读取文件列表 (I/O 操作，耗时长)
+            File[] allFiles = dir.listFiles();
+            if (allFiles == null) allFiles = new File[0];
 
-        List<File> filesList = Arrays.stream(allFiles).sorted((f1, f2) -> {
-            if (f1.isDirectory() && !f2.isDirectory()) return -1;
-            if (!f1.isDirectory() && f2.isDirectory()) return 1;
-            return f1.getName().compareToIgnoreCase(f2.getName());
-        }).collect(Collectors.toList());
+            // B. 排序文件列表 (计算操作，数据量大时耗时长)
+            List<File> filesList = Arrays.stream(allFiles).sorted((f1, f2) -> {
+                if (f1.isDirectory() && !f2.isDirectory()) return -1;
+                if (!f1.isDirectory() && f2.isDirectory()) return 1;
+                return f1.getName().compareToIgnoreCase(f1.getName());
+            }).collect(Collectors.toList());
 
-        fileAdapter.setNewData(filesList);
-        updateBreadcrumb(dir);
+            // C. 处理完成后，切回主线程更新 UI
+            runOnUiThread(() -> {
+                // 更新列表
+                fileAdapter.setNewData(filesList);
+                // 更新面包屑
+                updateBreadcrumb(dir);
+            });
+
+        }).start(); // 启动线程
     }
+	
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

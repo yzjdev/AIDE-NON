@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="AppTheme"
+        parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
+        <!-- 还可以根据需要覆盖其他属性 -->
+    </style>
+</resources>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/main">
+
+	<androidx.drawerlayout.widget.DrawerLayout
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:id="@+id/drawer">
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/drawer_main">
+
+			<com.google.android.material.appbar.MaterialToolbar
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:id="@+id/toolbar"/>
+
+			<com.google.android.material.floatingactionbutton.FloatingActionButton
+				android:layout_width="wrap_content"
+				android:id="@+id/fab"
+				android:src="@drawable/ic_baseline_add_24"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom|end"
+				android:layout_margin="16dp"/>
+
+		</FrameLayout>
+
+		<FrameLayout
+			android:id="@+id/drawer_left"
+			android:layout_width="280dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="start"
+			android:background="?attr/colorSurface">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical">
+
+				<com.aide.ui.re.NestedHorizontalScroll
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="?attr/colorSurfaceVariant"
+					android:paddingTop="8dp"
+					android:scrollbars="none"
+					android:paddingBottom="8dp">
+
+					<LinearLayout
+						android:id="@+id/breadcrumb_container"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal"
+						android:paddingStart="12dp"
+						android:paddingEnd="12dp"
+						android:gravity="center_vertical" />
+
+				</com.aide.ui.re.NestedHorizontalScroll>
+				
+				<!-- 3. 分割线 (可选) -->
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="1dp"
+					android:background="?attr/colorOutlineVariant" />
+
+				<!-- 4. 文件列表 -->
+				<androidx.recyclerview.widget.RecyclerView
+					android:id="@+id/file_browser_rv"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent" />
+
+			</LinearLayout>
+
+		</FrameLayout>
+
+		
+
+	</androidx.drawerlayout.widget.DrawerLayout>
+
+</FrameLayout>
+

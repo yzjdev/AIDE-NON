@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- 刷新 -->
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="刷新"/>
+    
+    <!-- 排序 (子菜单示例) -->
+    <item
+        android:id="@+id/menu_sort"
+        android:title="排序方式">
+        <menu
+			android:layout_gravity="end">
+            <item
+                android:id="@+id/sort_name"
+                android:title="按名称"/>
+            <item
+                android:id="@+id/sort_time"
+                android:title="按时间"/>
+            <item
+                android:id="@+id/sort_size"
+                android:title="按大小"/>
+        </menu>
+    </item>
+
+    <!-- 新建文件夹 -->
+    <item
+        android:id="@+id/menu_new_folder"
+        android:title="新建文件夹"/>
+
+</menu>

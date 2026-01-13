@@ -24,7 +24,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseAdapter.Ba
 
     // 修改处：这里也要带上泛型 <T>
     private OnItemClickListener<T> mListener;
-
+    private OnItemLongClickListener<T> mLongListener;
+	
     /**
      * 构造函数
      * @param context 上下文
@@ -60,24 +61,26 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseAdapter.Ba
         // 调用抽象方法，让子类实现具体的绑定逻辑
         convert(holder, item, position);
 
-        // 设置点击事件（如果有）
-        if (mListener != null) {
-            holder.itemView.setOnClickListener(v -> {
-                // 获取最新的位置，防止 position 错乱
-                int pos = holder.getAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION) {
-                    mListener.onItemClick(holder.itemView, pos, mData.get(pos));
-                }
-            });
-
-            holder.itemView.setOnLongClickListener(v -> {
-                int pos = holder.getAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION) {
-                    //mListener.onItemLongClick(holder.itemView, pos, mData.get(pos));
-                }
-                return true;
-            });
-        }
+        // 1. 单独判断并设置点击监听器
+		if (mListener != null) {
+			holder.itemView.setOnClickListener(v -> {
+				int pos = holder.getAdapterPosition();
+				if (pos != RecyclerView.NO_POSITION) {
+					mListener.onItemClick(holder.itemView, pos, mData.get(pos));
+				}
+			});
+		}
+		
+		// 2. 单独判断并设置长按监听器 (从上面的 if 块中拿出来)
+		if (mLongListener != null) {
+			holder.itemView.setOnLongClickListener(v -> {
+				int pos = holder.getAdapterPosition();
+				if (pos != RecyclerView.NO_POSITION) {
+					mLongListener.onItemLongClick(holder.itemView, pos, mData.get(pos));
+				}
+				return true; // 消费掉长按事件，防止后面再触发点击
+			});
+		}
     }
 
     /**
@@ -113,10 +116,19 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseAdapter.Ba
        // void onItemLongClick(View view, int position, T item);
     }
 
+	public interface OnItemLongClickListener<T> {
+        void onItemLongClick(View view, int position, T item);
+    }
+	
+	
     public void setOnItemClickListener(OnItemClickListener<T> listener) {
         this.mListener = listener;
     }
 
+
+    public void setOnItemLongClickListener(OnItemLongClickListener<T> listener) {
+        this.mLongListener = listener;
+    }
     // ============================
     // ViewHolder 封装类
     // ============================
@@ -171,6 +183,23 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseAdapter.Ba
             getView(viewId).setBackgroundColor(color);
             return this;
         }
+		
+		// 设置 ImageView 的颜色，支持传入主题属性
+        // 例如：holder.setImageViewTint(R.id.icon, R.attr.colorPrimary);
+        public BaseViewHolder setImageViewTint(int viewId, int attrRes) {
+            ImageView view = getView(viewId);
+
+            if (view != null) {
+                // 使用 MaterialColors 解析属性 (attr) 为具体的颜色值
+                // view.getContext() 可以确保使用当前视图的上下文和主题
+                int color = com.google.android.material.color.MaterialColors.getColor(view, attrRes);
+
+                // 设置颜色过滤器
+                view.setColorFilter(color);
+            }
+            return this; // 返回 this 以支持链式调用
+        }
+		
 
         // 如果需要更多方法，比如 setTag, setEnabled 等，都可以在这里链式扩展
     }

@@ -1,36 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:orientation="horizontal"
-	android:gravity="center_vertical">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="?android:attr/selectableItemBackground"
+    android:padding="10dp">
 
-	<ImageView
-		android:src="@android:drawable/ic_delete"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"/>
+    <ImageView
+        android:src="@android:drawable/ic_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/icon"
+	/>
 
-	<LinearLayout
-		android:orientation="vertical"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp">
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Large Text"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:id="@+id/file_name"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Large Text"
+            android:id="@+id/file_name"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="start"/>
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Small Text"
-			android:textAppearance="?android:attr/textAppearanceSmall"/>
+        <TextView
+            android:id="@+id/file_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Small Text"
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
-	</LinearLayout>
-
+    </LinearLayout>
 </LinearLayout>
 

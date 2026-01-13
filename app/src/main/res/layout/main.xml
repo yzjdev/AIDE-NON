@@ -42,42 +42,53 @@
 				android:layout_height="match_parent"
 				android:orientation="vertical">
 
-				<com.aide.ui.re.NestedHorizontalScroll
-					android:layout_width="match_parent"
+				<LinearLayout
 					android:layout_height="wrap_content"
-					android:background="?attr/colorSurfaceVariant"
-					android:paddingTop="8dp"
-					android:scrollbars="none"
-					android:paddingBottom="8dp">
-
-					<LinearLayout
-						android:id="@+id/breadcrumb_container"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal"
-						android:paddingStart="12dp"
-						android:paddingEnd="12dp"
-						android:gravity="center_vertical" />
-
-				</com.aide.ui.re.NestedHorizontalScroll>
-				
-				<!-- 3. 分割线 (可选) -->
-				<View
 					android:layout_width="match_parent"
-					android:layout_height="1dp"
-					android:background="?attr/colorOutlineVariant" />
+					android:orientation="horizontal"
+					android:gravity="center_vertical"
+					android:paddingStart="10dp"
+					android:paddingEnd="10dp">
 
-				<!-- 4. 文件列表 -->
+					<com.aide.ui.re.NestedHorizontalScroll
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:background="?attr/colorSurface"
+						android:paddingTop="8dp"
+						android:scrollbars="none"
+						android:paddingBottom="8dp"
+						android:layout_weight="1.0">
+
+						<LinearLayout
+							android:id="@+id/breadcrumb_container"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:orientation="horizontal"
+							android:paddingStart="12dp"
+							android:paddingEnd="12dp"
+							android:gravity="center_vertical"/>
+
+					</com.aide.ui.re.NestedHorizontalScroll>
+
+					<ImageView
+					
+						android:background="?android:attr/selectableItemBackground"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:src="@drawable/ic_round_more_vert_24"
+						android:id="@+id/file_browser_more"/>
+
+				</LinearLayout>
+
+
 				<androidx.recyclerview.widget.RecyclerView
 					android:id="@+id/file_browser_rv"
 					android:layout_width="match_parent"
-					android:layout_height="match_parent" />
+					android:layout_height="match_parent"/>
 
 			</LinearLayout>
 
 		</FrameLayout>
-
-		
 
 	</androidx.drawerlayout.widget.DrawerLayout>
 

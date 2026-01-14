@@ -273,6 +273,22 @@ public class MainActivity extends BaseActivity {
         fileAdapter.setOnItemLongClickListener((view, position, item) -> {
             PopupMenu popup = new PopupMenu(this, view, Gravity.END);
             popup.getMenuInflater().inflate(R.menu.file_browser_popup, popup.getMenu());
+			popup.setOnMenuItemClickListener(menuItem->{
+				int id=menuItem.getItemId();
+				if(id==R.id.menu_file_delete){
+					MaterialAlertDialogBuilder b=new MaterialAlertDialogBuilder(this);
+					b.setTitle("删除");
+					b.setMessage("是否删除文件 "+item.getName() +" ?\n删除后无法恢复");
+					b.setPositiveButton("确定",(d,w)->{
+						item.delete();
+						loadFiles(item.getParentFile(),true);
+					});
+					b.setNegativeButton("取消",null);
+					b.show();
+					return true;
+				}
+				return false;
+			});
             popup.show();
         });
         binding.fileBrowserRv.setAdapter(fileAdapter);
@@ -374,7 +390,7 @@ public class MainActivity extends BaseActivity {
                             f.getParentFile().mkdirs();
                         try {
                             f.createNewFile();
-                            loadFiles(f.getParentFile());
+                            loadFiles(f.getParentFile(),true);
                         } catch (IOException e) {
                         }
                     });
@@ -395,10 +411,17 @@ public class MainActivity extends BaseActivity {
     }
 
     // --- 核心逻辑：loadFiles ---
+    // 增加 boolean force 参数
     private void loadFiles(File dir) {
+        loadFiles(dir, false); // 默认不强制刷新
+    }
+
+    private void loadFiles(File dir, boolean force) {
         if (dir == null || !dir.exists())
             return;
-        if (currentDir != null && currentDir.equals(dir))
+        
+        // 【修改】只有在非强制刷新 且 目录相同时，才跳过
+        if (!force && currentDir != null && currentDir.equals(dir))
             return;
 
         this.currentDir = dir;
@@ -432,6 +455,7 @@ public class MainActivity extends BaseActivity {
         }).start();
     }
 
+	
     // --- UI 状态切换方法 ---
     private void updateUIState() {
         if (openedFiles.isEmpty()) {

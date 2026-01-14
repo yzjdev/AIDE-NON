@@ -22,35 +22,25 @@
 					android:layout_height="wrap_content"
 					android:layout_width="match_parent"
 					android:id="@+id/toolbar"/>
-				
+
+				<ProgressBar
+					style="?android:attr/progressBarStyleHorizontal"
+					android:layout_height="8dp"
+					android:layout_width="match_parent"
+					android:indeterminate="true"/>
+
 				<com.google.android.material.tabs.TabLayout
 					android:id="@+id/tab_layout"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="8dp"
-					app:tabMode="scrollable"
-					app:tabGravity="fill"
-					app:tabTextColor="?attr/colorOnSurface"
-					app:tabSelectedTextColor="?attr/colorPrimary"
-					app:tabIndicatorColor="?attr/colorPrimary"
-					app:tabIndicatorHeight="2dp"
-					app:tabPaddingStart="8dp" 
-					app:tabPaddingEnd="8dp"  
-					app:tabMinWidth="0dp" 
-					
-				/>
-				
-			
+					app:tabMode="scrollable"/>
 
-				<!-- ViewPager2：需要在Java代码中根据Tab数量控制显示/隐藏 -->
 				<androidx.viewpager2.widget.ViewPager2
 					android:id="@+id/view_pager"
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
 					android:layout_weight="1"/>
 
-				<!-- 新增：Empty View (空状态) -->
-				<!-- 初始隐藏，当Tab数量为0时显示 -->
 				<LinearLayout
 					android:id="@+id/empty_view"
 					android:layout_width="match_parent"

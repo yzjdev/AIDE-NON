@@ -103,7 +103,6 @@ public class MainActivity extends BaseActivity {
 
 		
         pagerAdapter = new TextEditorPagerAdapter(this, openedFiles);
-		
 		viewPager.setAdapter(pagerAdapter);
 		viewPager.setUserInputEnabled(false);
         

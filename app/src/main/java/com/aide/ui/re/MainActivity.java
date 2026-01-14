@@ -1,32 +1,37 @@
 package com.aide.ui.re;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.ViewParent;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.View;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.aide.ui.re.base.BaseActivity;
 import com.aide.ui.re.base.BaseAdapter;
 import com.aide.ui.re.databinding.MainBinding;
 import com.google.android.material.color.MaterialColors;
+
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
-import android.view.View;
 
 public class MainActivity extends BaseActivity {
 
@@ -34,6 +39,7 @@ public class MainActivity extends BaseActivity {
     private File currentDir;
     private File rootDir;
     private BaseAdapter<File> fileAdapter;
+    private BaseAdapter<File> breadcrumbAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +51,12 @@ public class MainActivity extends BaseActivity {
         setupWindowInsets();
         setupToolbar();
         setupRecyclerView();
+        setupBreadcrumbRv();
         setupMoreMenu();
 
         rootDir = new File(Environment.getExternalStorageDirectory(), "AppProjects");
         loadFiles(rootDir);
     }
-
-    // ======================
-    // UI 初始化拆分
-    // ======================
 
     private void setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
@@ -83,14 +86,9 @@ public class MainActivity extends BaseActivity {
             @Override
             protected void convert(BaseAdapter.BaseViewHolder holder, File item, int position) {
                 holder.setText(R.id.file_name, item.getName());
-
-                // 保持简单，只设置图片，不做额外着色处理（SVG 由你自己在资源里定义或处理）
                 holder.setImageResource(R.id.icon,
-										item.isDirectory()
-										? R.drawable.ic_baseline_folder_24
-										: R.drawable.ic_baseline_insert_drive_file_24);
+										item.isDirectory() ? R.drawable.ic_baseline_folder_24 : R.drawable.ic_baseline_insert_drive_file_24);
 
-                // 显示详情
                 String timeStr = formatDate(item.lastModified());
                 String detailsText;
 
@@ -109,10 +107,57 @@ public class MainActivity extends BaseActivity {
             if (item.isDirectory()) {
                 loadFiles(item);
             }
-            // 文件点击逻辑暂留
         });
 
         binding.fileBrowserRv.setAdapter(fileAdapter);
+    }
+
+    private void setupBreadcrumbRv() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        binding.breadcrumbRv.setLayoutManager(layoutManager);
+
+        // 启用嵌套滚动（配合自定义 DrawerLayout 使用）
+        ViewCompat.setNestedScrollingEnabled(binding.breadcrumbRv, true);
+        binding.breadcrumbRv.setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+        // 设置分隔线（箭头）装饰器
+        DividerItemDecoration decoration = new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL);
+        Drawable dividerDrawable = ContextCompat.getDrawable(this, R.drawable.ic_baseline_chevron_right_24);
+        if (dividerDrawable != null) {
+            int color = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.GRAY);
+            dividerDrawable.setTint(color);
+            decoration.setDrawable(dividerDrawable);
+        }
+        binding.breadcrumbRv.addItemDecoration(decoration);
+
+        // 【关键修改】关联 RecyclerView 到自定义 DrawerLayout，解决滑动冲突
+        // 注意：前提是布局文件中已将 DrawerLayout 替换为 CustomDrawerLayout
+        binding.drawer.setRecyclerView(binding.breadcrumbRv);
+
+        breadcrumbAdapter = new BaseAdapter<File>(this, R.layout.item_breadcrumb, new ArrayList<>()) {
+            @Override
+            protected void convert(BaseAdapter.BaseViewHolder holder, File item, int position) {
+                String name = item.getName();
+                if (name.isEmpty()) name = "Root";
+                holder.setText(R.id.breadcrumb_text, name);
+
+                boolean isLast = (position == getData().size() - 1);
+                int activeColor = MaterialColors.getColor(holder.itemView, com.google.android.material.R.attr.colorPrimary);
+                int normalColor = MaterialColors.getColor(holder.itemView, com.google.android.material.R.attr.colorOnSurface);
+
+                if (isLast) {
+                    holder.setTextColor(R.id.breadcrumb_text, activeColor);
+                    holder.setBackgroundRes(R.id.breadcrumb_text, R.drawable.bg_breadcrumb_active);
+                } else {
+                    holder.setTextColor(R.id.breadcrumb_text, normalColor);
+                    holder.setBackgroundRes(R.id.breadcrumb_text, 0);
+                }
+            }
+        };
+
+        breadcrumbAdapter.setOnItemClickListener((view, position, file) -> loadFiles(file));
+        binding.breadcrumbRv.setAdapter(breadcrumbAdapter);
     }
 
     private void setupMoreMenu() {
@@ -120,18 +165,16 @@ public class MainActivity extends BaseActivity {
             PopupMenu popup = new PopupMenu(this, v, Gravity.END);
             popup.getMenuInflater().inflate(R.menu.file_browser_popup, popup.getMenu());
 
-            // Menu 图标保持原样，不做 tint 处理
-
             popup.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
                 if (id == R.id.menu_refresh) {
                     loadFiles(currentDir);
                     return true;
                 } else if (id == R.id.menu_new_folder) {
-                    // TODO
+                    // TODO: 实现新建文件夹
                     return true;
                 } else if (id == R.id.sort_name) {
-                    // TODO
+                    // TODO: 实现排序
                     return true;
                 }
                 return false;
@@ -140,46 +183,45 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    // ======================
-    // 业务逻辑
-    // ======================
-
-	/**
-     * 加载文件列表 (优化版：防止卡顿)
-     */
     private void loadFiles(File dir) {
-        // 1. 基础检查
         if (dir == null || !dir.exists()) return;
-
-        // 2. 检查是否重复加载
         if (currentDir != null && currentDir.equals(dir)) return;
 
         this.currentDir = dir;
 
-        // 3. 【优化点】开启子线程处理耗时操作
         new Thread(() -> {
-            // A. 读取文件列表 (I/O 操作，耗时长)
             File[] allFiles = dir.listFiles();
             if (allFiles == null) allFiles = new File[0];
 
-            // B. 排序文件列表 (计算操作，数据量大时耗时长)
             List<File> filesList = Arrays.stream(allFiles).sorted((f1, f2) -> {
                 if (f1.isDirectory() && !f2.isDirectory()) return -1;
                 if (!f1.isDirectory() && f2.isDirectory()) return 1;
-                return f1.getName().compareToIgnoreCase(f1.getName());
+                return f1.getName().compareToIgnoreCase(f2.getName());
             }).collect(Collectors.toList());
 
-            // C. 处理完成后，切回主线程更新 UI
             runOnUiThread(() -> {
-                // 更新列表
                 fileAdapter.setNewData(filesList);
-                // 更新面包屑
                 updateBreadcrumb(dir);
             });
-
-        }).start(); // 启动线程
+        }).start();
     }
-	
+
+    private void updateBreadcrumb(File currentFile) {
+        if (currentFile == null || binding.breadcrumbRv == null) return;
+
+        List<File> pathList = new ArrayList<>();
+        File temp = currentFile;
+        while (temp != null) {
+            pathList.add(temp);
+            if (rootDir != null && temp.equals(rootDir.getParentFile())) break;
+            temp = temp.getParentFile();
+        }
+        Collections.reverse(pathList);
+
+        breadcrumbAdapter.setNewData(pathList);
+
+        binding.breadcrumbRv.post(() -> binding.breadcrumbRv.smoothScrollToPosition(pathList.size() - 1));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -204,78 +246,5 @@ public class MainActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    // ======================
-    // 辅助 UI
-    // ======================
-
-    private void updateBreadcrumb(File currentFile) {
-        if (binding.breadcrumbContainer == null) return;
-        android.widget.LinearLayout container = binding.breadcrumbContainer;
-
-        container.removeAllViews();
-        container.setGravity(Gravity.CENTER_VERTICAL);
-
-        // 构建路径链
-        List<File> pathList = new ArrayList<>();
-        File temp = currentFile;
-        while (temp != null) {
-            pathList.add(temp);
-            if (rootDir != null && temp.equals(rootDir.getParentFile())) break;
-            temp = temp.getParentFile();
-        }
-        Collections.reverse(pathList);
-
-        // 准备颜色
-        int normalColor = MaterialColors.getColor(container, com.google.android.material.R.attr.colorOnSurface);
-        int activeColor = MaterialColors.getColor(container, com.google.android.material.R.attr.colorOnPrimary);
-        int arrowColor = MaterialColors.getColor(container, com.google.android.material.R.attr.colorOnSurfaceVariant);
-
-        // 准备背景
-        TypedValue outValue = new TypedValue();
-        getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
-        Drawable ripple = getResources().getDrawable(outValue.resourceId);
-
-        // 填充视图
-        for (int i = 0; i < pathList.size(); i++) {
-            final File fileSegment = pathList.get(i);
-            boolean isLastItem = (i == pathList.size() - 1);
-
-            TextView segmentView =(TextView)View.inflate(this,R.layout.item_breadcrumb,null);// new TextView(this);
-            String name = fileSegment.getName();
-            if (name.isEmpty()) name = "Root";
-
-            segmentView.setText(name);
-            //segmentView.setTextSize(16);
-            //segmentView.setGravity(Gravity.CENTER);
-
-            if (isLastItem) {
-              //  segmentView.setBackgroundResource(R.drawable.bg_breadcrumb_active);
-                segmentView.setTextColor(activeColor);
-            } else {
-                segmentView.setBackground(ripple);
-                segmentView.setTextColor(normalColor);
-                segmentView.setOnClickListener(v -> loadFiles(fileSegment));
-            }
-
-            container.addView(segmentView);
-
-            if (i < pathList.size() - 1) {
-                ImageView arrowView = new ImageView(this);
-                arrowView.setImageResource(R.drawable.ic_baseline_chevron_right_24);
-                arrowView.setColorFilter(arrowColor);
-                container.addView(arrowView);
-            }
-        }
-
-        // 滚动到右侧 (这里直接使用类名，因为同包下不需要import)
-        container.post(() -> {
-            ViewParent parent = container.getParent();
-            if (parent instanceof NestedHorizontalScroll) {
-                int maxScroll = container.getWidth() - ((NestedHorizontalScroll) parent).getWidth();
-                if (maxScroll < 0) maxScroll = 0;
-                ((NestedHorizontalScroll) parent).scrollTo(maxScroll, 0);
-            }
-        });
-    }
 }
 

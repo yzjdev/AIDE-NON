@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 面包屑箭头的大小 -->
+    <dimen name="breadcrumb_arrow_size">18dp</dimen>
+    
+    <!-- 面包屑箭头距离文字的间距 -->
+    <dimen name="breadcrumb_arrow_margin">4dp</dimen>
+</resources>
+

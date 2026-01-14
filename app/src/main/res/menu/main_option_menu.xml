@@ -20,6 +20,7 @@
 
     <item android:title="设置"/>
 
-    <item android:title="退出"/>
+    <item android:title="退出"
+		android:id="@+id/main_menu_exit"/>
 
 </menu>

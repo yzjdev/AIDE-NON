@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+        android:id="@+id/menu_go_home"
+        android:title="项目"/>
+	
+	<item
+        android:id="@+id/menu_new_file"
+        android:title="新建"/>
+	
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="刷新"/>
+	<item
+        android:id="@+id/menu_test"
+        android:title="测试"/>
+
+	
+
+</menu>

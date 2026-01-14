@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.color.MaterialColors;
 import java.util.ArrayList;
 import java.util.List;
+import android.graphics.drawable.Drawable;
 
 /**
  * RecyclerView 通用适配器封装
@@ -192,6 +193,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseAdapter.Ba
             return this;
         }
 
+		public BaseViewHolder setBackground(int viewId, Drawable d) {
+            getView(viewId).setBackground(d);
+            return this;
+        }
+		
+		
 		public BaseViewHolder setTextColor(int viewId, int color) {
             TextView tv=getView(viewId);
 			tv.setTextColor(color);

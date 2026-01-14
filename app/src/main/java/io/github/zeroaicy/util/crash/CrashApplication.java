@@ -5,7 +5,6 @@ import android.content.Context;
 import io.github.zeroaicy.util.ContextUtil;
 import io.github.zeroaicy.util.DebugUtil;
 import io.github.zeroaicy.util.FileUtil;
-import com.google.android.material.color.*;
 
 public class CrashApplication extends Application{
 
@@ -24,7 +23,6 @@ public class CrashApplication extends Application{
 		mCrashApplication = CrashApplication.this;
 		//注册
 		CrashApphandler.getInstance().onCreated();
-		DynamicColors.applyToActivitiesIfAvailable(this);
 	}
 
 	@Override

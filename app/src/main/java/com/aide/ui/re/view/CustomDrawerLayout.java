@@ -1,4 +1,4 @@
-package com.aide.ui.re;
+package com.aide.ui.re.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

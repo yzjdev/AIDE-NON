@@ -62,7 +62,16 @@ android {
 }
 
 dependencies {
+	// Source: https://mvnrepository.com/artifact/androidx.swiperefreshlayout/swiperefreshlayout
+implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
+
+	//sora editor
     implementation 'io.github.rosemoe:editor:0.24.1'
+	implementation 'io.github.rosemoe:editor-lsp:0.24.1'
+	implementation 'io.github.rosemoe:language-textmate:0.24.1'
+	implementation 'io.github.rosemoe:language-treesitter:0.24.1'
+	implementation 'io.github.rosemoe:language-java:0.24.1'
+	
 
 	implementation 'com.google.code.gson:gson:2.13.2'
 

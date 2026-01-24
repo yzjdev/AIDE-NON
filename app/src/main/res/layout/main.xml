@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
 
-	<com.aide.ui.re.CustomDrawerLayout
+	<com.aide.ui.re.view.CustomDrawerLayout
 		android:layout_height="match_parent"
 		android:layout_width="match_parent"
 		android:id="@+id/drawer">
@@ -24,7 +26,6 @@
 					android:id="@+id/toolbar"/>
 
 				<ProgressBar
-					
 					android:visibility="gone"
 					style="?android:attr/progressBarStyleHorizontal"
 					android:layout_height="8dp"
@@ -58,7 +59,7 @@
 						android:text="没有打开的文件"
 						android:textSize="18sp"
 						android:textColor="?attr/colorOnSurfaceVariant"
-						android:layout_marginBottom="24dp"/>
+						android:layout_marginBottom="8dp"/>
 
 					<com.google.android.material.button.MaterialButton
 						android:id="@+id/btn_open_drawer"
@@ -70,14 +71,6 @@
 				</LinearLayout>
 
 			</LinearLayout>
-
-			<com.google.android.material.floatingactionbutton.FloatingActionButton
-				android:layout_width="wrap_content"
-				android:id="@+id/fab"
-				android:src="@drawable/ic_baseline_add_24"
-				android:layout_height="wrap_content"
-				android:layout_gravity="bottom|end"
-				android:layout_margin="16dp"/>
 
 		</FrameLayout>
 
@@ -120,16 +113,23 @@
 
 				</LinearLayout>
 
-				<androidx.recyclerview.widget.RecyclerView
-					android:id="@+id/file_browser_rv"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"/>
+				<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+					android:id="@+id/swipe_refresh"
+					android:layout_height="match_parent"
+					android:layout_width="match_parent">
+
+					<androidx.recyclerview.widget.RecyclerView
+						android:id="@+id/file_browser_rv"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"/>
+
+				</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 			</LinearLayout>
 
 		</FrameLayout>
 
-	</com.aide.ui.re.CustomDrawerLayout>
+	</com.aide.ui.re.view.CustomDrawerLayout>
 
 </FrameLayout>
 

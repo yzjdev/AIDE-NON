@@ -1,4 +1,4 @@
-package com.aide.ui.re;
+package com.aide.ui.re.fragment;
 // 在 TextEditorPagerAdapter.java 中
 
 import androidx.annotation.NonNull;
@@ -9,17 +9,17 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import java.io.File;
 import java.util.List;
 
-public class TextEditorPagerAdapter extends FragmentStateAdapter {
+public class EditorPagerAdapter extends FragmentStateAdapter {
     private List<File> dataList;
 
     // 保留原有的 FragmentActivity 构造器（Activity 中使用时可用）
-    public TextEditorPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<File> dataList) {
+    public EditorPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<File> dataList) {
         super(fragmentActivity);
         this.dataList = dataList;
     }
 
     // 新增：优先推荐在 Fragment 中传入 Fragment（会使用 childFragmentManager）
-    public TextEditorPagerAdapter(@NonNull Fragment fragment, List<File> dataList) {
+    public EditorPagerAdapter(@NonNull Fragment fragment, List<File> dataList) {
         super(fragment);
         this.dataList = dataList;
     }
@@ -28,7 +28,7 @@ public class TextEditorPagerAdapter extends FragmentStateAdapter {
     @Override
     public androidx.fragment.app.Fragment createFragment(int position) {
         File file = dataList.get(position);
-        return TextEditorFragment.newInstance(file.getAbsolutePath());
+        return EditorFragment.newInstance(file.getAbsolutePath());
     }
 
     @Override

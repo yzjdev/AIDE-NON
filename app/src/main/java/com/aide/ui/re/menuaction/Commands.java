@@ -16,6 +16,8 @@ public class Commands{
 		fileBrowserMenuMap.put(a.getMenuId(),a);
 		a=new DeleteMenu();
 		fileBrowserMenuMap.put(a.getMenuId(),a);
+		a=new RenameMenu();
+		fileBrowserMenuMap.put(a.getMenuId(),a);
 		
 	}
 }

@@ -32,6 +32,7 @@ import org.eclipse.tm4e.core.registry.IThemeSource;
 import android.view.MotionEvent;
 import com.aide.ui.re.MainActivity;
 import io.github.rosemoe.sora.widget.SymbolInputView;
+import java.util.Set;
 
 public class EditorFragment extends Fragment {
 	private static final String ARG_FILE_PATH = "arg_file_path";
@@ -62,12 +63,29 @@ public class EditorFragment extends Fragment {
 			currentFilePath = getArguments().getString(ARG_FILE_PATH);
 		}
 
-		// 安全读文件：如果路径为空则设置空文本
-		if (currentFilePath != null) {
+		if (FileUtils.isTextFile(new File(currentFilePath))) {
+
 			editText.setText(FileUtils.read(new File(currentFilePath)));
-		} else {
-			editText.setText("");
+		}else{
+			editText.setText("不支持的类型");
 		}
+		
+		/*
+		// 1. 最优创建方式：Java 9+ Set.of()
+		// 优点：代码极其简洁，不可变（线程安全，防止误修改）
+		Set<String> textTypes = Set.of("txt", "java", "kt", "json", "xml", "cpp", "h","md","gradle");
+
+		// 2. 使用逻辑
+		int dotIndex = currentFilePath.lastIndexOf('.');
+		if (currentFilePath != null 
+			&& dotIndex > 0 
+			&& textTypes.contains(currentFilePath.substring(dotIndex + 1).toLowerCase())) {
+
+			editText.setText(FileUtils.read(new File(currentFilePath)));
+		}else{
+			editText.setText("不支持的类型");
+		}
+		*/
 
 		// 1. 处理状态恢复
 		if (savedInstanceState != null) {

@@ -224,5 +224,58 @@ public class FileUtils {
             return String.format("%.1f GB", size / (1024.0 * 1024 * 1024));
         }
     }
+	
+	
+		/**
+		 * 判断文件是否为文本文件
+		 * 原理：读取文件前 4KB 字节，如果未发现 null 字节 (0x00) 且不可打印控制字符比例较低，则认为是文本文件。
+		 *
+		 * @param file 待判断的文件
+		 * @return true 是文本文件, false 是二进制文件或发生错误
+		 */
+		public static boolean isTextFile(File file) {
+			if (!file.exists() || !file.isFile()) {
+				return false;
+			}
+
+			// 定义检查的字节数，不需要读取整个大文件，通常前 4096 字节足够判断
+			byte[] buffer = new byte[4096];
+
+			try (FileInputStream fis = new FileInputStream(file)) {
+				int read = fis.read(buffer);
+				if (read == -1) {
+					// 空文件视为文本文件
+					return true;
+				}
+
+				int suspiciousCount = 0; // 可疑（不可打印）字符计数
+
+				for (int i = 0; i < read; i++) {
+					int b = buffer[i] & 0xFF; // 转换为无符号 int (0-255)
+
+					// 1. 检查是否存在 NULL 字节 (0x00)，这是二进制文件的最强特征
+					if (b == 0) {
+						return false;
+					}
+
+					// 2. 统计不可打印的控制字符
+					// 标准 ASCII 文本中，小于 32 (Space) 的通常是控制字符
+					// 我们允许 Tab (9), 换行 (10), 回车 (13)
+					if (b < 32 && b != 9 && b != 10 && b != 13) {
+						suspiciousCount++;
+					}
+				}
+
+				// 如果不可打印字符超过总读取数的 5% (经验阈值)，则认为是二进制文件
+				// 例如：一张图片或 exe 文件的开头可能全是乱码控制符
+				return (suspiciousCount / (double) read) < 0.05;
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+	
 }
 

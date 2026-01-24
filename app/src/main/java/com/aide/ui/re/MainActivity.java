@@ -97,6 +97,7 @@ public class MainActivity extends BaseActivity {
 
 		rootDir = new File(Environment.getExternalStorageDirectory(), "AppProjects");
 		openedDir = new File(mmkv.getString("openedDir", rootDir.getAbsolutePath()));
+		
 		loadFiles(openedDir);
 
 		// 读取已保存的文件列表
@@ -639,14 +640,14 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (currentDir != null && !currentDir.equals(rootDir)) {
-			File parent = currentDir.getParentFile();
-			if (parent != null && parent.exists()) {
-				loadFiles(parent);
-				return;
-			}
-		}
-
+//		if (currentDir != null && !currentDir.equals(rootDir)) {
+//			File parent = currentDir.getParentFile();
+//			if (parent != null && parent.exists()) {
+//				loadFiles(parent);
+//				return;
+//			}
+//		}
+//
 		if (binding.drawer.isDrawerOpen(GravityCompat.START)) {
 			binding.drawer.closeDrawer(GravityCompat.START);
 			return;

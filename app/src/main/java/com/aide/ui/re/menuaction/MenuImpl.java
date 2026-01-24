@@ -7,7 +7,7 @@ public interface MenuImpl{
 	int getMenuId();
 	String getMenuTitle();
 	Drawable getMenuIcon();
-	void run(Activity activity,Object...t);
+	void run(Activity activity,Object...params);
 	boolean isVisible();
 	boolean isEnabled();
 }
